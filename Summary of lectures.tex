@@ -1,0 +1,133 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+
+\title{Software Engineering from Innopolis}
+\author{Vladimir Maximov}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Итеритуемые объекты в Python}
+
+\subsection{Цель}
+
+Изучить коллекции в Python и работу с ними.
+
+\subsection{Задачи}
+
+\begin{itemize}
+    \item Ознакомиться со списками в Python.
+    \item Рассмотреть популярные операции, используемые
+    над списками slice, filter, map, reduce.
+    \item Ознакомиться с кортежем в Python.
+    \item Разобрать различные подходы создания коллекций.
+    \item Ознакомиться с множествами в Python.
+    \item Понять, чем руководствоваться при выборе 
+    коллекции для хранения объектов.
+\end{itemize}
+
+\subsection{Список}
+
+Список - упорядоченная и изменяемая коллекция объектов:
+
+\begin{verbatim}
+1   my_list = [1, 2, 3, None, [0], "word"]
+\end{verbatim}
+
+Слайс (срез) списка - создание нового списка, 
+используя элементы уже существующего:
+
+\begin{verbatim}
+1   my_list[2:4:1]
+\end{verbatim}
+
+Берем со 2 элемента включительно по 4 элемент 
+невключительно с шагом 1.
+
+% Это пропуск строки
+\vspace{1em}
+
+Краткая форма создания списка называется
+List comprehention (генератор списка):
+\begin{verbatim}
+1   [x for x in range(10)]
+\end{verbatim}
+
+\subsection{Кортеж}
+
+Кортеж - упорядоченная и неизменяемая коллекция:
+\begin{verbatim}
+1   (1, 2, 3, 4, 5)
+\end{verbatim}
+
+\subsection{Множество}
+
+Множество - неупоярдоченная коллекция значений, 
+в которой не допускаются повторения
+и не может содержать не хешируемых объектов:
+\begin{verbatim}
+1   {1, 2, 3, "some string"}
+\end{verbatim}
+
+\subsection{Словари}
+
+Словарь - изменяемая коллекция объектов, которые 
+обладают ключевыми словами. В Python словарь можно
+описать указанием ключей и значений элементов
+или генерирующим выражением:
+\begin{verbatim}
+1   {"key1" : "value1",
+2   "key2" : "value2",
+3   "key3" : "value3"}
+\end{verbatim} 
+
+\subsection{Использование памяти}
+
+Для хранения коллекций выделяется чуть больше памяти,
+чем фактически необходимо. Делается это для того, 
+чтобы интерпретатор Python при добавлении элементов
+выделял память реже.
+
+\vspace{1em}
+
+В Python в коллекции можно хранить разные объекты, 
+каждый из которых может быть непредвиданного размера.
+Поэтому в Python в списке хранятся указатели на нужные объекты.
+
+\subsection{Itertools}
+
+itertools - модуль, который предоставляет различные функции 
+для работы с итерируемыми объектами. Его можно использовать
+для упрощения записи операций над итерируемыми объектами.
+Примеры методов:
+
+\vspace{1em}
+
+itertools.combinations - метод для поиска подмножеств
+итерируемого объекта, возвращает генератор: 
+\begin{verbatim}
+1   import itertools    
+2   itertools.combinations("ABCD", 2)
+3   print(list(itertools.combinations("ABCD", 2)))
+4   # Вывод: [(A, B), (A, C), (A, D), (B, C), (B, D), (C, D)]
+\end{verbatim}
+
+\vspace{1em}
+
+itertools.compress - метод, который выбирает из исходного
+итерируемого объекта элементы, согласно селектору (маске):
+\begin{verbatim}
+1   import itertools    
+2   itertools.compress([1,2,3,4], [1,0,1,0])
+3   print(list(itertools.compress([1,2,3,4], [1,0,1,0])))
+4   # Вывод: [1,3]
+\end{verbatim}
+    
+\vspace{1em}
+
+
+\end{document}
