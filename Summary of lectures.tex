@@ -2,6 +2,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T2A]{fontenc}
 \usepackage[english,russian]{babel}
+\usepackage[usenames]{color}
+\usepackage{hyperref}
 
 \title{Software Engineering from Innopolis}
 \author{Vladimir Maximov}
@@ -112,7 +114,7 @@ itertools.combinations - метод для поиска подмножеств
 \begin{verbatim}
 1   import itertools    
 2   itertools.combinations("ABCD", 2)
-3   print(list(itertools.combinations("ABCD", 2)))
+3   list(itertools.combinations("ABCD", 2))
 4   # Вывод: [(A, B), (A, C), (A, D), (B, C), (B, D), (C, D)]
 \end{verbatim}
 
@@ -123,11 +125,197 @@ itertools.compress - метод, который выбирает из исход
 \begin{verbatim}
 1   import itertools    
 2   itertools.compress([1,2,3,4], [1,0,1,0])
-3   print(list(itertools.compress([1,2,3,4], [1,0,1,0])))
+3   list(itertools.compress([1,2,3,4], [1,0,1,0]))
 4   # Вывод: [1,3]
 \end{verbatim}
     
 \vspace{1em}
 
+\section{Функции над итерируемыми объектами}
+
+\subsection{Цель}
+
+Ознакомиться с тем, какие операции могут быть сделаны
+на итерируемых объектах и что можно представить в качестве
+итерируемого объекта.
+
+\subsection{Задачи}
+
+\begin{itemize}
+    \item Ознакомиться как еще можно работать со списками
+    \item На примерах понять, какие объекты можно представлять
+    в качестве итерируемого объекта.
+\end{itemize}
+
+\subsection{Itertools (продолжение)}
+
+Если стандартного набора библиотеки itertools не хватает,
+то можно использовать сторонний пакет - 
+\href{https://more-itertools.readthedocs.io/en/stable/api.html}
+{\textcolor{blue}{more\textunderscore itertools}}, он расширяет
+возможности работы с итерируемыми объектами. Примеры функций:
+
+\vspace{1em}
+
+Функция chunked:
+\begin{verbatim}
+1   from more_itertools import chunked
+2   iterable = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+3   list(chunked(iterable, 3))
+4   # Вывод: [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+\end{verbatim}
+
+Функция flatten:
+\begin{verbatim}
+1   from more_itertools import flatten
+2   iterable = [(0, 1), (2, 3)]
+3   list(flatten(iterable))
+4   # Вывод: [0, 1, 2, 3]
+\end{verbatim}
+
+Функция split\textunderscore at:
+\begin{verbatim}
+1   from more_itertools import split_at
+2   list(split_at('abcdcba', lambda x: x == 'b'))
+3   # Вывод: [['a'], ['c', 'd', 'c'], ['a']]
+\end{verbatim}
+
+Функция transpose:
+\begin{verbatim}
+1   from more_itertools import transpose
+2   list(transpose([(1, 2, 3), (11, 22, 33)]))
+3   # Вывод: [['a'], ['c', 'd', 'c'], ['a']]
+\end{verbatim}
+
+Функция windowed:
+\begin{verbatim}
+1   from more_itertools import windowed
+2   all_windows = windowed([1, 2, 3, 4, 5], 3)
+3   list(all_windows)
+4   # Вывод: [(1, 2, 3), (2, 3, 4), (3, 4, 5)]
+\end{verbatim}
+
+\subsection{Filter, Map, Reduce}
+
+Иногда для целесообразного использования памяти лучше 
+написать часть программы в функциональном стиле. 
+Особенно это применимо когда нужно пройтись по большому 
+количеству элементов. Для этого в python существуют встроенные
+функции. Их использование будет рассмотрено на простых примерах.
+
+\subsubsection{Filter}
+
+Filter - функция, которая позволяет выбрать из любого 
+итерируемого объекта элементы удовлетворяющие условию. 
+В качестве аргумента принимает функцию или лямбда-выражение
+и список, из которого отфильтрует значения:
+
+\begin{verbatim}
+1   items = [-5,-4,-3,-2,-1,0,1,2,3,4,5]
+2   def my_filter_expr(item):
+3       return item > 0
+4   positive_items = tuple(filter(my_filter_expr, items))
+5   print(positive_items)
+6   # Вывод: (1, 2, 3, 4, 5)
+\end{verbatim}
+
+Важно понимать что получившийс объект не хранит в себе все 
+элементы получившегося списка. Он хранит информацию о том 
+как можно получить каждый из последующих элементов списка. 
+Важно понимать как это работает чтобы в дальнейшем не попадать
+на ошибки. Самый близкий родственный объект к получившемуся 
+фильтру - итератор. Итератор это специальный объект в python 
+который выдает по одном элементу и по нему можно пройтись 
+только один раз.
+
+\subsubsection{Map}
+
+Map - функция, которая позволяет применить функцию ко всему 
+списку значений. В качестве аргумента принимает функцию или 
+лямбда-выражение и список, к элементам которого будет 
+применена функция:
+
+\begin{verbatim}
+1   list(map(lambda a: a[0]**a[1], [(0, 2), (1, 2), (2, 2)]))
+2   # Вывод: [0, 1, 4]
+\end{verbatim}
+
+\subsubsection{Reduce}
+
+Reduce - функция, применяющая другую функцию к 
+последовательным парам значений в списке, аналог функции
+Fold в Wolfram Mathematica:
+
+\begin{verbatim}
+1   from functools import reduce
+2   many_items = [1,2,3,4]
+3   product = reduce(lambda a, b: a * b, many_items)
+4   # Вывод: 24
+\end{verbatim}
+
+В начале в качестве переменной $a$ функция берет значение 1,
+в качестве переменной $b$ - 2, на втором шаге переменная $a$ - 
+результат функции на предыдущей итерации, $b$ - 3 и т.д. У
+функции есть третий необязательный аргумент - начальное значение.
+
+\subsection{Метод скользящего окна}
+
+Метод скользящего окна представляет собой процесс, при котором 
+окно фиксированного размера последовательно перемещается по 
+набору данных. Значения внутри окна анализируются и 
+обрабатываются для получения новых результатов, например, 
+вычисления среднего или медианного значения.
+
+\subsection{Операции из линейной алгебры}
+
+Линейная алгебра это раздел математики, основными конструкциями
+в которой являются списочный типы данных. Матрицы, векторы, 
+тензоры - это все понятия из линейной алгебры.
+Самые базовые математические операции в линейной алгебре - это 
+операции на этих структурах определенных в линейном 
+пространстве - транспонирование, перемножение матриц и 
+векторов, нахождение определителей, решение системы 
+линейныхуравнений. Пример перемнжения матриц в помощью
+more\textunderscore itertools:
+
+\begin{verbatim}
+1   from more_itertools import matmul
+2   matrix1 = [
+3   [1,2,3],
+4   [4,5,6],
+5   ]
+6   matrix2 = [
+7   [7, 8],
+8   [9, 10],
+9   [11, 12],
+10  ]
+11  list(matmul(matrix1, matrix2))
+12  # Вывод: [[58, 64], [139, 154]]
+\end{verbatim}
+
+\newpage
+
+\subsection{Линейная алгебра с numpy}
+
+numpy - библиотека, которая заточена под выполнение 
+операций на матрицах. Основные фукнции можно посмотреть по 
+\href{https://github.com/KeithGalli/NumPy/blob/master/
+NumPy%20Tutorial.ipynb}{\textcolor{blue}{ссылке}}. 
+Пример перемножения матриц с помощью numpy:
+
+\begin{verbatim}
+1   import numpy as np
+2   matrix1 = np.array([
+3   [1,2,3],
+4   [4,5,6],
+5   ])
+6   matrix2 = np.array([
+7   [7, 8],
+8   [9, 10],
+9   [11, 12],
+10  ])
+11  matrix1 @ matrix2
+12  # Вывод: array([[58, 64], [139, 154]])
+\end{verbatim}
 
 \end{document}
